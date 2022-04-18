@@ -25,7 +25,7 @@
 <br />
 <div align="center">
 
-<h3 align="center">FabricQL</h3>
+<h3 align="center">HFGQL</h3>
 
   <p align="center">
     Hyperledger Fabric Application built with Netflix DGS

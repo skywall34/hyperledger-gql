@@ -2,8 +2,8 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: hyperledger-gql
-  namespace: kind
+  name: hfgql
+  namespace: test-network
 spec:
   replicas: 1
   strategy:
@@ -12,15 +12,15 @@ spec:
       maxSurge: 100%
   selector:
     matchLabels:
-      app: hyperledger-gql
+      app: hfgql
   template:
     metadata:
       labels:
-        app: hyperledger-gql
+        app: hfgql
     spec:
       containers:
         - name: server
-          image: $DOCKERHUB/library/hyperledger-gql:0.0.1
+          image: localhost:5000/kind-registry:0.0.1
           imagePullPolicy: Always
           workingDir: /usr/src
           env:
@@ -29,7 +29,7 @@ spec:
             - name: ECERT_CA_SERVER
               value: "https://org1-ca:443"
             - name: CONFIG_FILE_PATH
-              value: "/opt/hyperledger-gql/conf/configmap.yaml"
+              value: "/opt/hfgql/conf/configmap.yaml"
             - name: ORG1_CONNECTION_PROFILE_PATH
               value: "/application/gateways/org1_ccp.json"
             - name: ORG2_CONNECTION_PROFILE_PATH
@@ -81,9 +81,9 @@ spec:
         - name: fabric-volume
           persistentVolumeClaim:
             claimName: fabric-org1
-        - name: coin-config-volume
+        - name: app-config-volume
           configMap:
-            name: coin-config
+            name: app-config
             items:
               - key: configmap.yaml
                 path: configmap.yaml
