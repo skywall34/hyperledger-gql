@@ -67,9 +67,9 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-Here's a blank template to get started: To avoid retyping too much info. Do a search and replace with your text editor for the following: `github_username`, `repo_name`, `twitter_handle`, `linkedin_username`, `email_client`, `email`, `project_title`, `project_description`
-
 FabricQL is an example project of how to create a GraphQL Project over a Hyperledger Fabric network. The framework is based off of Netflix's DGS and creates a gateway accessing a ERC 20 Token contract already installed in the Hyperledger Network over kubernetes.
+
+Much of the Fabric code is based off the rest-api-typescript example in the fabric-samples repo [here](https://github.com/hyperledger/fabric-samples/tree/main/asset-transfer-basic/rest-api-typescript) but reconfigured to work with an ERC 20 Token Contract and written in Kotlin DGS.
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
