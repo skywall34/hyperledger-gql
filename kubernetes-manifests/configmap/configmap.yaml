@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: hyperledger-gql-config
+  namespace: test-network
+  labels:
+    app: hyperledger-gql
+data:
+  configmap.yaml: |+
+    fabric_channel: mychannel
+    fabric_contract: token-20
+    fabric_wallet_dir: /fabric/application/wallet
+    fabric_gateway_hostport: org1-peer1:7051
+    fabric_gateway_sslHostOverride: org1-peer1
+    fabric_user: appuser_org1
+    fabric_gateway_tlsCertPath: /fabric/tlscacerts/org1-tls-ca.pem
+    logLevel: debug
+    hfcLogging: '{ "debug": "console" }'
+    retryDelay: 3000
+    maxRetryCount: 5
+    hlfCommitTimeout: 3000
+    hlfEndorseTimeout: 30
+    org1APIKey: 97834158-3224-4CE7-95F9-A148C886653E
+    org2APIKey: BC42E734-062D-4AEE-A591-5973CB763430
+    asLocalHost: true
+    hlfChaincodeName: token-20
+    channelName: mychannel

@@ -1,0 +1,37 @@
+scalar Long
+#scalar JSON
+scalar Object
+# Defines the value of the metric (ts: Long, value: String)
+#scalar Value
+
+# To add the service to the Bramble Federation https://movio.github.io/bramble/#/getting-started
+type Service {
+    # unique name for the service
+    name: String!
+    # any string
+    version: String!
+    # the full schema for the service
+    schema: String!
+}
+
+type Query {
+    service: Service!
+
+    # Return the total supply
+    total_supply: Long!
+    # Return the current balance of the user given account id
+    balance_of(account: String!): Long!
+    # Return the user's account id
+    client_id: String!
+}
+
+type Mutation {
+
+    # Transfer transfers tokens from client account to recipient account
+    # recipient account must be a valid clientID as returned by the ClientID() function
+    transfer(
+        recipient: String!,
+        amount: Int
+    ): String!
+
+}

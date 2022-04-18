@@ -1,0 +1,89 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hyperledger-gql
+  namespace: kind
+spec:
+  replicas: 1
+  strategy:
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 100%
+  selector:
+    matchLabels:
+      app: hyperledger-gql
+  template:
+    metadata:
+      labels:
+        app: hyperledger-gql
+    spec:
+      containers:
+        - name: server
+          image: $DOCKERHUB/library/hyperledger-gql:0.0.1
+          imagePullPolicy: Always
+          workingDir: /usr/src
+          env:
+            - name: JAVA_TOOL_OPTIONS
+              value: "-Xmx2G"
+            - name: ECERT_CA_SERVER
+              value: "https://org1-ca:443"
+            - name: CONFIG_FILE_PATH
+              value: "/opt/hyperledger-gql/conf/configmap.yaml"
+            - name: ORG1_CONNECTION_PROFILE_PATH
+              value: "/application/gateways/org1_ccp.json"
+            - name: ORG2_CONNECTION_PROFILE_PATH
+              value: "/application/gateways/org2_ccp.json"
+            - name: ORG1_IDENTITY_FILE_PATH
+              value: "/application/wallet/appuser_org1.id"
+            - name: ORG2_IDENTITY_FILE_PATH
+              value: "/application/wallet/appuser_org2.id"
+            - name: CA_CLIENT_CERT_PATH
+              value: "/msp/organizations/peerOrganizations/org1.example.com/msp/cacerts/org1-ecert-ca.pem"
+            - name: CA_TLS_CLIENT_CERT_PATH
+              value: "/msp/organizations/peerOrganizations/org1.example.com/msp/tlscacerts/org1-tls-ca.pem"
+          resources:
+            requests:
+              cpu: 2
+              memory: 2Gi
+            limits:
+              cpu: 2
+              memory: 3Gi
+          volumeMounts:
+            - name: fabric-volume
+              mountPath: /var/hyperledger/
+            - name: coin-config-volume
+              mountPath: /opt/coin/conf/
+          readinessProbe:
+            httpGet:
+              port: 8080
+              path: "/actuator/health"
+            successThreshold: 1
+            failureThreshold: 2
+            periodSeconds: 5
+            initialDelaySeconds: 15
+          livenessProbe:
+            httpGet:
+              port: 8080
+              path: "/actuator/health"
+            successThreshold: 1
+            failureThreshold: 2
+            periodSeconds: 5
+            initialDelaySeconds: 15
+          startupProbe:
+            httpGet:
+              port: 8080
+              path: "/actuator/health"
+            failureThreshold: 5
+            initialDelaySeconds: 5
+            periodSeconds: 3
+      volumes:
+        - name: fabric-volume
+          persistentVolumeClaim:
+            claimName: fabric-org1
+        - name: coin-config-volume
+          configMap:
+            name: coin-config
+            items:
+              - key: configmap.yaml
+                path: configmap.yaml

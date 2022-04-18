@@ -1,0 +1,100 @@
+buildscript {
+    dependencies {
+        classpath("com.google.cloud.tools:jib-spring-boot-extension-gradle:0.1.0")
+    }
+}
+
+plugins {
+    id 'java'
+    id 'idea'
+    id 'org.jetbrains.kotlin.jvm' version '1.5.21'
+    id("org.springframework.boot") version "2.5.4"
+    id("io.spring.dependency-management") version "1.0.11.RELEASE"
+    id("com.netflix.dgs.codegen") version "5.0.6"
+    id "com.google.cloud.tools.jib" version "2.8.0"
+}
+
+tasks {
+    jib {
+        pluginExtensions {
+            pluginExtension {
+                implementation = "com.google.cloud.tools.jib.gradle.extension.springboot.JibSpringBootExtension"
+            }
+        }
+    }
+}
+
+version = '0.0.1'
+description = 'Fabric Application to GraphQL'
+java.sourceCompatibility = JavaVersion.VERSION_11
+java.targetCompatibility = JavaVersion.VERSION_11
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+compileKotlin {
+    kotlinOptions.jvmTarget = "11"
+}
+compileTestKotlin {
+    kotlinOptions.jvmTarget = "11"
+}
+
+generateJava{
+    schemaPaths = ["${projectDir}/src/main/resources/schema"] // List of directories containing schema files
+    packageName = 'com.hyperledger.gql' // The package name to use to generate sources
+}
+
+
+dependencies {
+
+    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.12.1'
+
+    implementation group: 'co.elastic.apm', name: 'apm-agent-api', version: '1.21.0'
+    implementation group: 'co.elastic.apm', name: 'apm-agent-attach', version: '1.21.0'
+    implementation 'org.slf4j:slf4j-api:1.7.30'
+
+    implementation 'io.micrometer:micrometer-registry-prometheus:1.7.4'
+    implementation 'io.prometheus:simpleclient:0.12.0'
+    implementation 'io.prometheus:simpleclient_hotspot:0.12.0'
+    implementation 'io.prometheus:simpleclient_httpserver:0.12.0'
+    implementation 'io.prometheus:simpleclient_pushgateway:0.12.0'
+
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.5.21'
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.5.21'
+
+    implementation "com.squareup.okhttp3:okhttp:4.9.1"
+//    implementation "com.squareup.okhttp3:okhttp-ws:3.4.2"
+
+    // managed by the plugin
+    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+//	implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
+    implementation "org.springframework.boot:spring-boot-starter-web"
+    implementation "org.springframework.boot:spring-boot-starter-actuator"
+    developmentOnly "org.springframework.boot:spring-boot-devtools"
+
+    // platform bom takes care of dgs versions
+    implementation(platform("com.netflix.graphql.dgs:graphql-dgs-platform-dependencies:4.9.0"))
+    implementation 'com.netflix.graphql.dgs:graphql-dgs-spring-boot-micrometer'
+    implementation "com.netflix.graphql.dgs:graphql-dgs-spring-boot-starter"
+    implementation "com.netflix.graphql.dgs:graphql-dgs-extended-scalars"
+
+    implementation 'com.fasterxml.jackson.module:jackson-module-kotlin:2.13.0'
+    implementation 'com.fasterxml.jackson.module:jackson-module-afterburner:2.13.0'
+    implementation 'org.hyperledger.fabric:fabric-gateway-java:2.2.0'
+
+    testImplementation "org.springframework.boot:spring-boot-starter-test"
+}
+
+jib {
+    allowInsecureRegistries = true
+    to.image = "localhost:5000/kind-registry:$version"
+    container.mainClass = "com.hyperledger.gql.MainKt"
+    extraDirectories.paths = 'extra'
+}
+
+
+test {
+    useJUnitPlatform()
+}

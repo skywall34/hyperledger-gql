@@ -1,0 +1,29 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: hyperledger-gql
+  namespace: kind
+  annotations:
+    nginx.ingress.kubernetes.io/cors-allow-headers: DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,x-token
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: "0"
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+    nginx.ingress.kubernetes.io/send-timeout: "3600"
+spec:
+  rules:
+    - host: hyperledger-gql.com
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: hyperledger-gql
+              servicePort: 8080
+  tls:
+    - hosts:
+        - hyperledger-gql.com
+status:
+  loadBalancer:
+    ingress:
+      - {}
