@@ -108,7 +108,15 @@ class UserClient {
      * - If no user is found, register username as a guest user wallet
      * **/
     fun getUser(dfe: DgsDataFetchingEnvironment): String {
-        TODO("Not Implemented")
+        // Simplify the username process for now, in the future we'd want this to be its own auth system
+        // TODO: test security of this function, CA and wallet should handle authentication
+        val username = dfe.getDgsContext().requestData!!.headers!!.getFirst("username")!!
+        return if (fabricClient.wallet[username] != null) {
+            username
+        } else {
+            registerUser(username)
+            username
+        }
     }
 
 }

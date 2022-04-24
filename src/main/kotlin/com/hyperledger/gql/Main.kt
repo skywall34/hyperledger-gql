@@ -24,7 +24,6 @@ enum class Contracts(val contract: String) {
 open class GraphqlApplication
 
 val fabricClient = FabricClient()
-//TODO: Create logger
 val logger = LoggerFactory.getLogger("com.hyperledger.gql")
 
 fun main(args: Array<String>) {
